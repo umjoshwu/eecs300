@@ -22,40 +22,28 @@ void setup() {
 void loop() {
   int leftSensorValue = analogRead(leftsnsr);
   int rightSensorValue = analogRead(rightsnsr);
-
-  unsigned long currentTime = millis(); // get the current time
-      // Serial.print(leftSensorValue);
-      // Serial.print("  |  ");
-      // Serial.println(rightSensorValue);
+  unsigned long currentTime = millis(); 
 
   if(leftSensorValue > 1400 && rightonly) {
     if (currentTime - lastDetectionTime > cooldownPeriod) { // if the cooldown period has passed
-      // Serial.print("human entered: ");
-      // Serial.print(leftSensorValue);
-      // Serial.print("  |  ");
-      // Serial.print(rightSensorValue);
+      //printone();
       Serial.print("ENTER: ");
       Serial.println(++count);
       lastDetectionTime = currentTime; // update the time of the last detection
       rightonly = false;
-      Serial.println("Right sensor deactivated");
+      
     }
   }
 
   else if(rightSensorValue > 2500 && leftonly) {
     if (currentTime - lastDetectionTime > cooldownPeriod) { // if the cooldown period has passed
-      // Serial.print("human exited: ");
-      // Serial.print(leftSensorValue);
-      // Serial.print("  |  ");
-      // Serial.print(rightSensorValue);
+      //printone();
       Serial.print("EXIT: ");
-      if (count > 0){
---count;
-      }
+      if (count > 0){--count;}
       Serial.println(count);
       lastDetectionTime = currentTime; // update the time of the last detection
       leftonly = false;
-      Serial.println("Left sensor deactivated");
+      
     }
   }
 
@@ -63,22 +51,35 @@ void loop() {
   else if(leftSensorValue > 1400 && !leftonly) {
     leftonly = true;
     leftActivationTime = currentTime;
-    Serial.println("Left sensor activated only");
+    print();
   }
 
   else if(rightSensorValue > 2500 && !rightonly) {
     rightonly = true;
     rightActivationTime = currentTime;
-    Serial.println("Right sensor activated only");
+    print();
   }
 
   if ((currentTime - leftActivationTime > 1500) && leftonly) { // if the left sensor has been on for more than 1 second
     leftonly = false;
-    Serial.println("Left sensor deactivated");
+    print();
   }
 
   if ((currentTime - rightActivationTime > 1500) && rightonly) { // if the right sensor has been on for more than 1 second
     rightonly = false;
-    Serial.println("Right sensor deactivated");
+    print();
   }
 }
+
+void print(){
+  Serial.print("[");
+Serial.print(leftonly);
+Serial.print(",");
+Serial.print(rightonly);
+Serial.println("]");
+}
+
+      // Serial.print("human exited: ");
+      // Serial.print(leftSensorValue);
+      // Serial.print("  |  ");
+      // Serial.print(rightSensorValue);
