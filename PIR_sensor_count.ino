@@ -7,7 +7,7 @@ volatile bool rightonly = false;
 volatile int count = 0;
 
 unsigned long lastDetectionTime = 0; // time of the last detection
-unsigned long cooldownPeriod = 5000; // cooldown period in milliseconds (5 seconds)
+unsigned long cooldownPeriod = 2500; // cooldown period in milliseconds (5 seconds)
 unsigned long leftActivationTime = 0; // time when the left sensor was activated
 unsigned long rightActivationTime = 0; // time when the right sensor was activated
 
@@ -24,7 +24,14 @@ void loop() {
   int rightSensorValue = analogRead(rightsnsr);
   unsigned long currentTime = millis(); 
 
-  if(leftSensorValue > 1400 && rightonly) {
+  Serial.print("[");
+  Serial.print(leftSensorValue);
+  Serial.print(",");
+  Serial.print(rightSensorValue);
+  Serial.println("]");
+  delay(100);
+
+  if(leftSensorValue > 1370 && rightonly) {
     if (currentTime - lastDetectionTime > cooldownPeriod) { // if the cooldown period has passed
       //printone();
       Serial.print("ENTER: ");
@@ -35,7 +42,7 @@ void loop() {
     }
   }
 
-  else if(rightSensorValue > 2500 && leftonly) {
+  else if(rightSensorValue > 2350 && leftonly) {
     if (currentTime - lastDetectionTime > cooldownPeriod) { // if the cooldown period has passed
       //printone();
       Serial.print("EXIT: ");
@@ -48,35 +55,50 @@ void loop() {
   }
 
 
-  else if(leftSensorValue > 1400 && !leftonly) {
+  else if(leftSensorValue > 1335 && !leftonly) {
+    Serial.print("left only:  ");
+    Serial.println(leftSensorValue);
     leftonly = true;
     leftActivationTime = currentTime;
     print();
   }
 
-  else if(rightSensorValue > 2500 && !rightonly) {
+  else if(rightSensorValue > 2580 && !rightonly) {
     rightonly = true;
     rightActivationTime = currentTime;
     print();
   }
 
-  if ((currentTime - leftActivationTime > 1500) && leftonly) { // if the left sensor has been on for more than 1 second
+  if ((currentTime - leftActivationTime > 1700) && leftonly) { // if the left sensor has been on for more than 1 second
     leftonly = false;
     print();
   }
 
   if ((currentTime - rightActivationTime > 1500) && rightonly) { // if the right sensor has been on for more than 1 second
+      //this value was 1500
     rightonly = false;
     print();
   }
+
+
+  // if(leftonly && !rightonly){
+  //   Serial.print("right coming? : ");
+  //   Serial.println(rightSensorValue);
+  // }
 }
 
 void print(){
-  Serial.print("[");
-Serial.print(leftonly);
-Serial.print(",");
-Serial.print(rightonly);
-Serial.println("]");
+  // Serial.print("[");
+  // Serial.print(leftonly);
+  // Serial.print(",");
+  // Serial.print(rightonly);
+  // Serial.println("]");
+
+  // Serial.print("[");
+  // Serial.print(leftSensorValue);
+  // Serial.print(",");
+  // Serial.print(rightSensorValue);
+  // Serial.println("]");
 }
 
       // Serial.print("human exited: ");
